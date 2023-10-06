@@ -1,29 +1,62 @@
 #ifndef FTTCP_TASK_H
 #define FTTCP_TASK_H
 
+#include <sys/socket.h>
 #include <stdint.h>
+#include <stdbool.h>
+
+typedef struct task task_t;
+
+typedef int (*meta_f_t)(task_t* task);
+typedef int (*file_trans_f_t)(task_t* task);
+typedef int (*consistency_f_t)(task_t* task);
+typedef int (*finisher_f_t)(task_t* task);
+
+struct state_function
+{
+    meta_f_t meta;
+    file_trans_f_t ftrans;
+    consistency_f_t consist;
+    finisher_f_t fin;
+};
+
+struct ftcontext
+{
+    uint64_t file_full_size;
+    uint64_t file_curr_size;
+
+    uint16_t filename_length;
+
+    unsigned int socket;
+    
+    char* filename;    
+};
+
+struct cltaddr
+{
+    struct sockaddr addr;
+    socklen_t addrlen;
+};
 
 typedef enum
 {
     META = 0,
     FILE_TRANSFER,
     CONSISTENCY_CHECKING,
-    DONE
+    DIE
 } task_state_t;
 
-typedef struct
+typedef struct task
 {
-    unsigned int socket;
+    bool ready_to_die;
 
-    uint64_t file_full_size;
-    uint64_t file_curr_size;
-
-    uint16_t filename_length;
-    char* filename;
+    struct ftcontext file_transfer_context;
+    struct state_function state_function;
+    struct cltaddr cltaddr;
 
     task_state_t task_state;
 } task_t;
 
-extern int init_task(task_t* task, const unsigned int socket_fd);
+extern void init_task(task_t* task, const int socket, const struct state_function* state_function, const struct cltaddr* cltaddr);
 
 #endif /* FTTCP_TASK_H */
