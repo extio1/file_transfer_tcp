@@ -42,7 +42,7 @@ listen_routine(const unsigned int lst_port)
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = lst_port;
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //INADDR_ANY;
+    addr.sin_addr.s_addr = INADDR_ANY;
 
     if( bind(lst_socket, (struct sockaddr *)&addr, sizeof(addr)) != 0){
         perror("bind(lst_socket) error");
@@ -55,7 +55,6 @@ listen_routine(const unsigned int lst_port)
     }
 
     while(1){
-        printf("Wait on %s:%d\n", inet_ntoa(addr.sin_addr), addr.sin_port);
         if( (clt_sock = accept(lst_socket, &in_addr, &in_addr_socklen)) == -1){
             perror("accept() err");
             continue;

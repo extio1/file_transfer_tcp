@@ -1,6 +1,8 @@
 #ifndef FTTCP_EXECUTOR_H
 #define FTTCP_EXECUTOR_H 1
 
+#include "task.h"
+
 #include <arpa/inet.h>
 #include <sys/socket.h>
 

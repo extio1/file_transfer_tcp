@@ -35,8 +35,7 @@ worker_routine(void* args)
         }        
     }
 
-    printf("File transfer finished\n");
-    return 0;
+    pthread_exit(NULL);
 }
 
 int 

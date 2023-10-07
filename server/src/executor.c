@@ -14,8 +14,9 @@ const struct state_function state_function = {.meta = meta,
 int
 execute(int socket, struct sockaddr addr, socklen_t socklen)
 {
-    task_t* task = malloc(sizeof(task_t));
-    init_task(task, socket, &state_function, &(struct cltaddr){.addr = addr, .addrlen = socklen});
+    task_t* task = (task_t*) malloc(sizeof(task_t));
+    struct cltaddr cltaddr = {.addr = addr, .addrlen = socklen};
+    init_task(task, socket, &state_function, &cltaddr);
 
     if( create_worker(task) != 0){
         perror("create_worket() error");

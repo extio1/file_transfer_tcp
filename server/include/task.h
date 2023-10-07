@@ -24,11 +24,16 @@ struct ftcontext
 {
     uint64_t file_full_size;
     uint64_t file_curr_size;
+    uint64_t file_prev_size;
+
+    unsigned int n_delta;
+    uint64_t avg_speed;
 
     uint16_t filename_length;
 
     unsigned int socket;
-    
+    unsigned int fd;
+
     char* filename;    
 };
 
@@ -48,15 +53,19 @@ typedef enum
 
 typedef struct task
 {
-    bool ready_to_die;
-
     struct ftcontext file_transfer_context;
     struct state_function state_function;
     struct cltaddr cltaddr;
 
+    unsigned short succeed;
     task_state_t task_state;
 } task_t;
 
+
 extern void init_task(task_t* task, const int socket, const struct state_function* state_function, const struct cltaddr* cltaddr);
+extern void free_task(task_t* task);
+
+
+extern int create_file(task_t* task, const char* filename);
 
 #endif /* FTTCP_TASK_H */

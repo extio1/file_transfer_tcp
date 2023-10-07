@@ -28,6 +28,11 @@ main(int argc, char** argv)
         return -1;
     }
 */
+    if( chdir(working_dir) != 0 ){
+        perror("chroot() error");
+        return -1;
+    }
+
     listen_port = atol(argv[1]);
 
     if(listen_port <= 0 || listen_port >= 65536) {

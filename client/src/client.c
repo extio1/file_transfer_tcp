@@ -17,7 +17,7 @@ main(int argc, char** argv)
         return -1;
     }
 
-    printf("CLT'll send file <%s> sizeof %ld with name length %d\n", context.filename, context.file_size, context.filename_length);
+    printf(">>> CLT'll send file <%s> sizeof %ld with name length %d\n", context.filename, context.file_size, context.filename_length);
 
     if( cp_file_to(&context) != 0){
         printf("File copy to server error\n");

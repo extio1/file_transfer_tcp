@@ -45,18 +45,6 @@ create_context(const char* filename, const char* servername, const char* port_st
         return -1;
     }
 
-    struct addrinfo *addr = addr_server;
-    while(addr != NULL){
-        if(connect(sock, addr->ai_addr, addr->ai_addrlen) == 0){
-            struct sockaddr_in* conaddr = (struct sockaddr_in*)(addr->ai_addr);
-            printf("connected to %s:%d\n", inet_ntoa(conaddr->sin_addr), conaddr->sin_port);
-            break;
-        } else {
-            perror("connect() error");
-        }
-        addr = addr->ai_next;
-    }
-
     context->socket = sock;
     context->filename_length = strlen(filename);
     context->filename = malloc(context->filename_length);
@@ -73,6 +61,20 @@ create_context(const char* filename, const char* servername, const char* port_st
     }
 
     context->file_size = file_stat.st_size;
+
+    struct addrinfo *addr = addr_server;
+    while(addr != NULL){
+        struct sockaddr_in* conaddr = (struct sockaddr_in*)(addr->ai_addr);
+        if(connect(sock, addr->ai_addr, addr->ai_addrlen) == 0){
+            printf("connected to %s:%d\n", inet_ntoa(conaddr->sin_addr), conaddr->sin_port);
+            break;
+        } else {
+            printf("NOT connected to %s:%d\n", inet_ntoa(conaddr->sin_addr), conaddr->sin_port);
+            perror("connect() error");
+        }
+        addr = addr->ai_next;
+    }
+
     context->initialized = true;
 
     return 0;
