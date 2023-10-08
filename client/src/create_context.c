@@ -2,6 +2,7 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -21,6 +22,7 @@ create_context(const char* filename, const char* servername, const char* port_st
     struct addrinfo hints;
     struct stat file_stat;
     int sock;
+    bool connected = 0;
 
     bzero(context, sizeof(connection_context_t));
 
@@ -67,12 +69,18 @@ create_context(const char* filename, const char* servername, const char* port_st
         struct sockaddr_in* conaddr = (struct sockaddr_in*)(addr->ai_addr);
         if(connect(sock, addr->ai_addr, addr->ai_addrlen) == 0){
             printf("connected to %s:%d\n", inet_ntoa(conaddr->sin_addr), conaddr->sin_port);
+            connected = true;
             break;
         } else {
             printf("NOT connected to %s:%d\n", inet_ntoa(conaddr->sin_addr), conaddr->sin_port);
             perror("connect() error");
         }
         addr = addr->ai_next;
+    }
+
+    if(!connected){
+        printf("NOT connected\n");
+        return -1;
     }
 
     context->initialized = true;
